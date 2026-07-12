@@ -1,29 +1,48 @@
-pipeline{
+pipeline {
     agent any
 
     environment {
         VercelToken = credentials('vercel_token')
     }
+
     stages {
-        stage('Install') {
+
+        stage('Install Backend') {
             steps {
-                bat 'npm install'
-            } 
-        }
-         stage('test') {
-            steps {
-                echo 'test'
+                dir('backend') {
+                    bat 'npm install'
+                }
             }
         }
-         stage('buildt') {
+
+        stage('Install Frontend') {
             steps {
-               bat 'npm run build'
+                dir('front-end') {
+                    bat 'npm install'
+                }
             }
-    }
-         stage('deploy') {
+        }
+
+        stage('Test') {
             steps {
-                bat 'npx vercel --prod --yes --token=%VercelToken%'
+                echo 'Testing completed'
             }
-    }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('front-end') {
+                    bat 'npm run build'
+                }
+            }
+        }
+
+        stage('Deploy to Vercel') {
+            steps {
+                dir('front-end') {
+                    bat 'npx vercel --prod --yes --token=%VercelToken%'
+                }
+            }
+        }
     }
 }
