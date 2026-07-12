@@ -38,11 +38,13 @@ pipeline {
         }
 
         stage('Deploy to Vercel') {
-            steps {
-                dir('front-end') {
-                    bat 'npx vercel --prod --yes --token=%VercelToken%'
-                }
+    steps {
+        dir('front-end') {
+            withCredentials([string(credentialsId: 'vercel_token', variable: 'VERCEL_TOKEN')]) {
+                bat 'npx vercel --prod --yes --token=%VERCEL_TOKEN%'
             }
         }
+    }
+}
     }
 }
