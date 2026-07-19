@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+
+    ports:
+      - "27017:27017"
+
+    volumes:
+      - mongo-data:/data/db
+
+    networks:
+      - book-network
+
+  app:
+    build: .
+    container_name: book-management-app
+
+    restart: always
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/bookmanagement
+      - PORT=3000
+
+    depends_on:
+      - mongodb
+
+    networks:
+      - book-network
+
+volumes:
+  mongo-data:
+
+networks:
+  book-network:
